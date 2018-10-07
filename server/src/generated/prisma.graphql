@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/karolis-stulgys-9eb3b5/hackernews-demo-app/dev
-# timestamp: Sat Oct 06 2018 11:35:50 GMT+1000 (Australian Eastern Standard Time)
+# timestamp: Sun Oct 07 2018 18:10:46 GMT+1100 (Australian Eastern Daylight Time)
 
 type AggregateLink {
   count: Int!
@@ -18,10 +18,13 @@ type BatchPayload {
   count: Long!
 }
 
+scalar DateTime
+
 type Link implements Node {
   id: ID!
-  url: String!
+  createdAt: DateTime!
   description: String!
+  url: String!
   postedBy: User
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
 }
@@ -37,8 +40,8 @@ type LinkConnection {
 }
 
 input LinkCreateInput {
-  url: String!
   description: String!
+  url: String!
   postedBy: UserCreateOneWithoutLinksInput
   votes: VoteCreateManyWithoutLinkInput
 }
@@ -54,14 +57,14 @@ input LinkCreateOneWithoutVotesInput {
 }
 
 input LinkCreateWithoutPostedByInput {
-  url: String!
   description: String!
+  url: String!
   votes: VoteCreateManyWithoutLinkInput
 }
 
 input LinkCreateWithoutVotesInput {
-  url: String!
   description: String!
+  url: String!
   postedBy: UserCreateOneWithoutLinksInput
 }
 
@@ -77,20 +80,21 @@ type LinkEdge {
 enum LinkOrderByInput {
   id_ASC
   id_DESC
-  url_ASC
-  url_DESC
-  description_ASC
-  description_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  description_ASC
+  description_DESC
+  url_ASC
+  url_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type LinkPreviousValues {
   id: ID!
-  url: String!
+  createdAt: DateTime!
   description: String!
+  url: String!
 }
 
 type LinkSubscriptionPayload {
@@ -133,8 +137,8 @@ input LinkSubscriptionWhereInput {
 }
 
 input LinkUpdateInput {
-  url: String
   description: String
+  url: String
   postedBy: UserUpdateOneWithoutLinksInput
   votes: VoteUpdateManyWithoutLinkInput
 }
@@ -156,14 +160,14 @@ input LinkUpdateOneRequiredWithoutVotesInput {
 }
 
 input LinkUpdateWithoutPostedByDataInput {
-  url: String
   description: String
+  url: String
   votes: VoteUpdateManyWithoutLinkInput
 }
 
 input LinkUpdateWithoutVotesDataInput {
-  url: String
   description: String
+  url: String
   postedBy: UserUpdateOneWithoutLinksInput
 }
 
@@ -232,46 +236,28 @@ input LinkWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  url: String
+  createdAt: DateTime
 
   """All values that are not equal to given value."""
-  url_not: String
+  createdAt_not: DateTime
 
   """All values that are contained in given list."""
-  url_in: [String!]
+  createdAt_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  url_not_in: [String!]
+  createdAt_not_in: [DateTime!]
 
   """All values less than the given value."""
-  url_lt: String
+  createdAt_lt: DateTime
 
   """All values less than or equal the given value."""
-  url_lte: String
+  createdAt_lte: DateTime
 
   """All values greater than the given value."""
-  url_gt: String
+  createdAt_gt: DateTime
 
   """All values greater than or equal the given value."""
-  url_gte: String
-
-  """All values containing the given string."""
-  url_contains: String
-
-  """All values not containing the given string."""
-  url_not_contains: String
-
-  """All values starting with the given string."""
-  url_starts_with: String
-
-  """All values not starting with the given string."""
-  url_not_starts_with: String
-
-  """All values ending with the given string."""
-  url_ends_with: String
-
-  """All values not ending with the given string."""
-  url_not_ends_with: String
+  createdAt_gte: DateTime
   description: String
 
   """All values that are not equal to given value."""
@@ -312,6 +298,46 @@ input LinkWhereInput {
 
   """All values not ending with the given string."""
   description_not_ends_with: String
+  url: String
+
+  """All values that are not equal to given value."""
+  url_not: String
+
+  """All values that are contained in given list."""
+  url_in: [String!]
+
+  """All values that are not contained in given list."""
+  url_not_in: [String!]
+
+  """All values less than the given value."""
+  url_lt: String
+
+  """All values less than or equal the given value."""
+  url_lte: String
+
+  """All values greater than the given value."""
+  url_gt: String
+
+  """All values greater than or equal the given value."""
+  url_gte: String
+
+  """All values containing the given string."""
+  url_contains: String
+
+  """All values not containing the given string."""
+  url_not_contains: String
+
+  """All values starting with the given string."""
+  url_starts_with: String
+
+  """All values not starting with the given string."""
+  url_not_starts_with: String
+
+  """All values ending with the given string."""
+  url_ends_with: String
+
+  """All values not ending with the given string."""
+  url_not_ends_with: String
   postedBy: UserWhereInput
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
