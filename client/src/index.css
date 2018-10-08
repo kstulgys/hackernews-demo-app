@@ -5,6 +5,7 @@ body {
   width: 100vw;
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: #e9ebed;
 
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",

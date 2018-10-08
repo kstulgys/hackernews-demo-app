@@ -5,14 +5,25 @@ import {
   Textarea,
   TextField,
   Label,
-  Hint,
+  MediaFigure,
   Input,
-  Message
+  FauxInput
 } from "@zendeskgarden/react-textfields";
-import LinkList from "./LinkList";
+import { Button } from "@zendeskgarden/react-buttons";
+import { Grid, Row, Col } from "@zendeskgarden/react-grid";
+import { Well } from "@zendeskgarden/react-notifications";
+import DownShift from "downshift";
+import { FaSearch } from "react-icons/fa";
+import { Dots } from "@zendeskgarden/react-loaders";
+import debounce from "lodash.debounce";
+
 const FEED_SEARCH_QUERY = gql`
   query FeedSearchQuery($filter: String) {
-    feed(where: { url_contains: $filter }) {
+    feed(
+      where: {
+        OR: [{ url_contains: $filter }, { description_contains: $filter }]
+      }
+    ) {
       links {
         id
         url
@@ -35,48 +46,85 @@ const FEED_SEARCH_QUERY = gql`
 
 class Search extends Component {
   state = {
-    links: "",
-    filter: ""
+    links: [],
+    loading: false
   };
+  handleSearch = debounce(async e => {
+    console.log("searching...");
 
-  executeSearch = async () => {
-    const { filter } = this.state;
-    const result = await this.props.client.query({
+    this.setState({ loading: true });
+    const res = await this.props.client.query({
       query: FEED_SEARCH_QUERY,
-      variables: { filter }
+      variables: { filter: e.target.value }
     });
-    const links = filter !== "" ? result.data.feed.links : "";
-
-    this.setState({ links });
-  };
-
-  handleSearch = e => {
-    const { value } = e.target;
-    setTimeout(() => {
-      this.setState({ filter: value });
-      if (this.state.filter) {
-        this.executeSearch();
-      } else {
-        this.setState({ links: "" });
-      }
-      console.log("executed");
-    }, 350);
-  };
+    this.setState({ links: res.data.feed.links, loading: false });
+  }, 300);
 
   render() {
-    // const { links } = this.state;
     return (
-      <Fragment>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <Input
-            style={{ width: 410 }}
-            placeholder="Search links..."
-            onChange={this.handleSearch}
-          />
-          {/* <button onClick={this.handleSearch}>Search</button> */}
-        </div>
-        <LinkList searchTermLinks={this.state.links} />
-      </Fragment>
+      <Grid>
+        <Row justifyContent="center">
+          <Col size={12} md={5} sm={7}>
+            <DownShift>
+              {({
+                getInputProps,
+                getItemProps,
+                isOpen,
+                inputValue,
+                highlightedIndex
+              }) => (
+                <div>
+                  <FauxInput mediaLayout>
+                    <MediaFigure style={{ width: 25 }}>
+                      {this.state.loading ? <Dots size="20px" /> : <FaSearch />}
+                    </MediaFigure>
+                    <Input
+                      bare
+                      {...getInputProps({
+                        type: "search",
+                        placeholder: "Search links...",
+                        onChange: e => {
+                          e.persist();
+                          this.handleSearch(e);
+                        }
+                      })}
+                    />
+                  </FauxInput>
+                  <div
+                    style={{
+                      position: "absolute",
+                      zIndex: 10,
+                      left: 0,
+                      width: "100%"
+                    }}
+                  >
+                    {this.state.links &&
+                      isOpen &&
+                      this.state.links.map((link, index) => (
+                        <Well floating style={{ padding: 0, width: "100%" }}>
+                          <Button
+                            key={link.id}
+                            stretched
+                            basic
+                            style={{
+                              display: "flex",
+                              flexDirection: "column"
+                            }}
+                          >
+                            <div>
+                              <p>{link.url}</p>
+                              <p>{link.description}</p>
+                            </div>
+                          </Button>
+                        </Well>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </DownShift>
+          </Col>
+        </Row>
+      </Grid>
     );
   }
 }

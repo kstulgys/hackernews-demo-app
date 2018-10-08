@@ -12,7 +12,7 @@ class App extends Component {
       <div>
         <Nav />
         <Search />
-        {/* <LinkList /> */}
+        <LinkList />
       </div>
     );
   }

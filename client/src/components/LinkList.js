@@ -12,8 +12,6 @@ import {
   Close
 } from "@zendeskgarden/react-modals";
 
-import Search from "./Search";
-
 class LinkList extends Component {
   updateCacheAfterVote = (store, createVote, linkId) => {
     const data = store.readQuery({ query: FEED_QUERY });
@@ -31,28 +29,21 @@ class LinkList extends Component {
               if (loading) return <div>Fetching</div>;
               if (error) return <div>Error</div>;
               const allLinks = data.feed.links;
-              console.log(allLinks);
-
-              let linksToRender =
-                this.props.searchTermLinks !== ""
-                  ? this.props.searchTermLinks
-                  : allLinks;
-              // const linksToRender = data.feed.links;
-              console.log(linksToRender);
 
               return (
                 <Col size={12} md={5} sm={7} style={{ marginTop: "10vh" }}>
-                  {linksToRender.map((link, index) => (
-                    <Row style={{ marginBottom: 15 }} key={link.id}>
-                      <Col>
-                        <Link
-                          link={link}
-                          index={index}
-                          updateStoreAfterVote={this.updateCacheAfterVote}
-                        />
-                      </Col>
-                    </Row>
-                  ))}
+                  {allLinks &&
+                    allLinks.map((link, index) => (
+                      <Row style={{ marginBottom: 15 }} key={link.id}>
+                        <Col>
+                          <Link
+                            link={link}
+                            index={index}
+                            updateStoreAfterVote={this.updateCacheAfterVote}
+                          />
+                        </Col>
+                      </Row>
+                    ))}
                 </Col>
               );
             }}
@@ -68,7 +59,7 @@ export const FEED_QUERY = gql`
     feed {
       links {
         id
-        # createdAt
+        createdAt
         url
         description
         postedBy {
